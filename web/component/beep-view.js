@@ -34,39 +34,51 @@ export class BeepView extends BeeperBase {
     }
   }
 
+  createRenderRoot() {
+    return this;
+  } 
+
   render() {
-    return html` <div class="beep">
-      <div class="beep-header">
-        <img
-          src="${this.beep.authorPicture}"
-          alt="Profile picture of ${this.beep.authorName}"
-          class="author-profile-picture"
-        />
-        <div>
-          <a class="author" href="/user/${this.beep.authorName}">
-            ${this.beep.authorName}
-          </a>
-          <span class="created-at">
-            &nbsp;- ${new Date(this.beep.createdAt).toLocaleString()} -&nbsp;
-          </span>
-          <span
-            class="likes ${this.beep.liked ? "liked" : ""}"
-            ${this.beep.liked ? "data-liked" : ""}
-          >
-            <span
-              class="like-count ${this.beep.liked ? "liked" : ""}"
-              @click=${this.handleLike}
-            >
-              ${this.beep.likeCount}
-            </span>
-            +
-          </span>
+    return html` 
+    <div class = "beep d-flex justify-content-center">
+        <div class="card text-left w-75">
+            <div class="card-header">
+              <img
+                  src="${this.beep.authorPicture}"
+                  alt="Profile picture of ${this.beep.authorName}"
+                  class="author-profile-picture"
+                  width="30" height="30"
+              />
+                <span class = "user">
+                  <a href="/user/${this.beep.authorName}">
+                  @${this.beep.authorName}
+                  </a>
+                </span>
+                <br>
+                <span class="created-at text-body-secondary">
+                  ${new Date(this.beep.createdAt).toLocaleString()}
+              </span>
+            </div>
+
+            <div class="card-body">
+                <p class="card-text content">${this.beep.content}</p>
+            </div>
+
+            <div class="card-footer text-body-secondary">
+              <!-- <span
+              class="likes ${this.beep.liked ? "liked" : ""}"
+              ${this.beep.liked ? "data-liked" : ""}
+              > -->
+                <span class="like-count" ${this.beep.liked ? "liked" : ""}> ${this.beep.likeCount} like(s) &nbsp;</span>
+                <a @click = ${this.handleLike} class="btn btn-primary">Like</a>
+                <a class="btn btn-primary">Reply</a>
+            </div>
         </div>
-      </div>
-      <div>${this.beep.content}</div>
-    </div>`;
+    </div>
+    <br>`;
   }
 
+  /**
   static styles = [
     BeeperBase.styles,
     css`
@@ -106,6 +118,7 @@ export class BeepView extends BeeperBase {
       }
     `,
   ];
+  */
 }
 
 customElements.define("beep-view", BeepView);

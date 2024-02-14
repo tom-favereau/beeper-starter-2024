@@ -53,13 +53,38 @@ class BeeperHome extends BeeperBase {
     }
   }
 
+  createRenderRoot() {
+    return this;
+  } 
+
   render() {
     return html` <beeper-header></beeper-header>
-      <h1>Welcome ${this.userName}!</h1>
-      <textarea @keyup=${this.postBeep}></textarea>
-      <beep-list beepList=${JSON.stringify(this.beepList)}></beep-list>`;
+      <div class = "container bg-primary bg-gradient"> 
+        <font color="#FFFFFF">
+        <h1>  
+        Welcome ${this.userName}!
+        </h1>
+        </font>
+      <br>
+      <div id = "post" class = "container">
+        <br>
+        <textarea @keyup= ${this.postBeep} class="form-control" id="postInput" rows="3" placeholder="What's up?" ></textarea>
+          <div class = "d-grid gap-2 d-md-flex justify-content-md-end container">
+            <br>
+            <button id = "post-button" class="btn btn-light" type="submit" @click= ${this.postBeep}>Post</button>
+          </div>
+          <hr>
+      </div>  
+      <div class>
+        <br>
+      ${this.beepList.map(
+        (b) => html`<beep-view beep="${JSON.stringify(b)}"></beep-view>`
+      )} 
+      </div>
+    </div>`;
   }
 
+  /**
   static styles = [
     BeeperBase.styles,
     css`
@@ -70,6 +95,7 @@ class BeeperHome extends BeeperBase {
       }
     `,
   ];
+  */
 }
 
 customElements.define("beeper-home", BeeperHome);

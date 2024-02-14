@@ -45,9 +45,13 @@ class UserPage extends BeeperBase {
     }
   }
 
+  createRenderRoot() {
+    return this;
+  } 
+
   render() {
     return html` <beeper-header></beeper-header>
-      <div class="user">
+      <div class="user container">
         <img
           class="viewed-user-profile-picture"
           src="${this.userInfo?.viewedUser.picture}"
