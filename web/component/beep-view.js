@@ -1,5 +1,6 @@
-import { css, html } from "lit";
+import { css, html} from "lit";
 import { BeeperBase } from "./beeper-base.js";
+
 
 export class BeepView extends BeeperBase {
   static properties = {
@@ -39,6 +40,7 @@ export class BeepView extends BeeperBase {
   } 
 
   render() {
+    const replacedContent = this.beep.content.replace(/@(\w+)/g, '<a href="/user/$1">@$1</a>')
     return html` 
     <div class = "beep d-flex justify-content-center">
         <div class="card text-left w-75">
@@ -61,7 +63,7 @@ export class BeepView extends BeeperBase {
             </div>
 
             <div class="card-body">
-                <p class="card-text content">${this.beep.content}</p>
+                <p class="card-text content" .innerHTML=${replacedContent}></p>
             </div>
 
             <div class="card-footer text-body-secondary">
