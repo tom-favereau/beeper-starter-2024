@@ -6,7 +6,7 @@ import { getUserPageByName } from "./use-case/get-user-page.js";
 import { like, unlike } from "./use-case/like.js";
 import { follow, unfollow } from "./use-case/follow.js";
 import { authMiddleware } from "./auth/auth-middleware.js";
-
+import { exists } from "./db/exist.js";
 export const api = Router();
 
 api.use(bodyParser.json());
@@ -98,5 +98,17 @@ api.put("/unlike/:beepId", async (req, res) => {
     } else {
       throw e;
     }
+  }
+});
+
+api.get("/exists/:name", async (req, res) => {
+  try {
+    const username = req.params.name;
+    const userExists = await exists(username);
+
+    res.status(200).json({ exists: userExists });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });

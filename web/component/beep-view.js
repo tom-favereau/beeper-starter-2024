@@ -1,12 +1,17 @@
 import { css, html} from "lit";
 import { BeeperBase } from "./beeper-base.js";
 
-
 export class BeepView extends BeeperBase {
   static properties = {
     beep: {
       type: Object,
     },
+    mentions: {
+      type: Array,
+    },
+    treatedContent: {
+      type: String,
+    }
   };
 
   constructor() {
@@ -39,8 +44,36 @@ export class BeepView extends BeeperBase {
     return this;
   } 
 
+  async existsInDB(username) {
+    const response = await fetch(`/api/exists/${username}`, {
+      method: "GET",
+    });
+  
+    if (!response.ok) {
+      // Handle non-successful responses
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+  
+    const data = await response.json();
+  
+    // Assuming your server returns { exists: true } or { exists: false }
+    return data.exists;
+  }
+
+  async connectedCallback() {
+    super.connectedCallback();
+    const potentialUsers = this.beep.content.match(/@(\w+)/g) || []
+    let replacedContent = this.beep.content
+    for (const user of potentialUsers) {
+      if (await this.existsInDB(user.substring(1))) {
+        replacedContent = this.beep.content.replace(user, '<a href="/user/' + user.substring(1) + '">' + user + '</a>')
+      }
+    }
+    this.treatedContent = replacedContent;
+  }
+  
+
   render() {
-    const replacedContent = this.beep.content.replace(/@(\w+)/g, '<a href="/user/$1">@$1</a>')
     return html` 
     <div class = "beep d-flex justify-content-center">
         <div class="card text-left w-75">
@@ -63,7 +96,7 @@ export class BeepView extends BeeperBase {
             </div>
 
             <div class="card-body">
-                <p class="card-text content" .innerHTML=${replacedContent}></p>
+                <p class="card-text content" .innerHTML=${this.treatedContent}></p>
             </div>
 
             <div class="card-footer text-body-secondary">
