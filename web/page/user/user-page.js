@@ -45,29 +45,37 @@ class UserPage extends BeeperBase {
     }
   }
 
+  createRenderRoot() {
+    return this;
+  } 
+
   render() {
     return html` <beeper-header></beeper-header>
+      <br>
+      <div class = "container">
       <div class="user">
         <img
           class="viewed-user-profile-picture"
           src="${this.userInfo?.viewedUser.picture}"
           alt="Profile pic"
+          width="50" height="50"
         />
         <span class="viewed-user-username"
           >${this.userInfo?.viewedUser.name}'s latest beeps</span
         >
         ${this.isSelf
           ? ""
-          : html`<button @click=${this.follow} class="follow-button">
+          : html`<button @click=${this.follow} class="follow-button btn-primary">
               ${this.userInfo?.followed ? "Unfollow" : "Follow"}
             </button>`}
       </div>
-
+      <hr>
       <beep-list
         beepList=${JSON.stringify(
           this.userInfo === null ? [] : this.userInfo.beeps
         )}
-      ></beep-list>`;
+      ></beep-list>
+      </div>`;
   }
 
   static styles = [

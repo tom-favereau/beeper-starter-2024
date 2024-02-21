@@ -9,12 +9,18 @@ export class BeepList extends BeeperBase {
     },
   };
 
+  /**
   static styles = [BeeperBase.styles, css``];
+  */
 
   constructor() {
     super();
     this.beepList = [];
   }
+
+  createRenderRoot() {
+    return this;
+  } 
 
   render() {
     return html`

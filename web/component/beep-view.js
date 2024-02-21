@@ -1,4 +1,4 @@
-import { css, html } from "lit";
+import { css, html} from "lit";
 import { BeeperBase } from "./beeper-base.js";
 
 export class BeepView extends BeeperBase {
@@ -6,6 +6,12 @@ export class BeepView extends BeeperBase {
     beep: {
       type: Object,
     },
+    mentions: {
+      type: Array,
+    },
+    treatedContent: {
+      type: String,
+    }
   };
 
   constructor() {
@@ -34,39 +40,80 @@ export class BeepView extends BeeperBase {
     }
   }
 
-  render() {
-    return html` <div class="beep">
-      <div class="beep-header">
-        <img
-          src="${this.beep.authorPicture}"
-          alt="Profile picture of ${this.beep.authorName}"
-          class="author-profile-picture"
-        />
-        <div>
-          <a class="author" href="/user/${this.beep.authorName}">
-            ${this.beep.authorName}
-          </a>
-          <span class="created-at">
-            &nbsp;- ${new Date(this.beep.createdAt).toLocaleString()} -&nbsp;
-          </span>
-          <span
-            class="likes ${this.beep.liked ? "liked" : ""}"
-            ${this.beep.liked ? "data-liked" : ""}
-          >
-            <span
-              class="like-count ${this.beep.liked ? "liked" : ""}"
-              @click=${this.handleLike}
-            >
-              ${this.beep.likeCount}
-            </span>
-            +
-          </span>
-        </div>
-      </div>
-      <div>${this.beep.content}</div>
-    </div>`;
+  createRenderRoot() {
+    return this;
+  } 
+
+  async existsInDB(username) {
+    const response = await fetch(`/api/exists/${username}`, {
+      method: "GET",
+    });
+  
+    if (!response.ok) {
+      // Handle non-successful responses
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+  
+    const data = await response.json();
+  
+    // Assuming your server returns { exists: true } or { exists: false }
+    return data.exists;
   }
 
+  async connectedCallback() {
+    super.connectedCallback();
+    const potentialUsers = this.beep.content.match(/@(\w+)/g) || []
+    let replacedContent = this.beep.content
+    for (const user of potentialUsers) {
+      if (await this.existsInDB(user.substring(1))) {
+        replacedContent = this.beep.content.replace(user, '<a href="/user/' + user.substring(1) + '">' + user + '</a>')
+      }
+    }
+    this.treatedContent = replacedContent;
+  }
+  
+
+  render() {
+    return html` 
+    <div class = "beep d-flex justify-content-center">
+        <div class="card text-left w-75">
+            <div class="card-header">
+              <img
+                  src="${this.beep.authorPicture}"
+                  alt="Profile picture of ${this.beep.authorName}"
+                  class="author-profile-picture"
+                  width="30" height="30"
+              />
+                <span class = "user">
+                  <a href="/user/${this.beep.authorName}">
+                  @${this.beep.authorName}
+                  </a>
+                </span>
+                <br>
+                <span class="created-at text-body-secondary">
+                  ${new Date(this.beep.createdAt).toLocaleString()}
+              </span>
+            </div>
+
+            <div class="card-body">
+                <p class="card-text content" .innerHTML=${this.treatedContent}></p>
+            </div>
+
+            <div class="card-footer text-body-secondary">
+              <!-- <span
+              class="likes ${this.beep.liked ? "liked" : ""}"
+              ${this.beep.liked ? "data-liked" : ""}
+              > -->
+                <span class="like-count" ${this.beep.liked ? "liked" : ""}> ${this.beep.likeCount} like(s) &nbsp;</span>
+                <a @click = ${this.handleLike} class="btn btn-primary">Like</a>
+                <a class="btn btn-primary">Reply</a>
+            </div>
+        </div>
+    </div>
+    <br>`;
+  }
+
+  /**
   static styles = [
     BeeperBase.styles,
     css`
@@ -106,6 +153,7 @@ export class BeepView extends BeeperBase {
       }
     `,
   ];
+  */
 }
 
 customElements.define("beep-view", BeepView);
