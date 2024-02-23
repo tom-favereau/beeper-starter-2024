@@ -7,7 +7,10 @@ Pour commencer :
  - Lancer le serveur avec `node server.js` (ou `npx nodemon server.js` pour qu'il redémarre automatiquement quand un fichier change)
 
 # Travail effectué
+
 ## Mentions
+
+Les likes étaient déjà fonctionnels, mais rafraîchissaient la page, ce qui a été corrigé.
 
 Ajout de la possibilité de faire des mentions dans le corps du tweet avec le symbole @.
 La mention, si elle est valable (si le nom d'utilisateur mentionné existe dans la base de données)
