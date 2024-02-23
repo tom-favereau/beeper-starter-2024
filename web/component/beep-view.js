@@ -6,9 +6,6 @@ export class BeepView extends BeeperBase {
     beep: {
       type: Object,
     },
-    mentions: {
-      type: Array,
-    },
     treatedContent: {
       type: String,
     }
@@ -16,6 +13,7 @@ export class BeepView extends BeeperBase {
 
   constructor() {
     super();
+    this.treatedContent = "";
   }
 
   async handleLike() {
@@ -60,20 +58,20 @@ export class BeepView extends BeeperBase {
     return data.exists;
   }
 
-  async connectedCallback() {
-    super.connectedCallback();
+  async mentions() {
     const potentialUsers = this.beep.content.match(/@(\w+)/g) || []
     let replacedContent = this.beep.content
+    console.log(replacedContent);
     for (const user of potentialUsers) {
       if (await this.existsInDB(user.substring(1))) {
-        replacedContent = this.beep.content.replace(user, '<a href="/user/' + user.substring(1) + '">' + user + '</a>')
+        replacedContent = replacedContent.replace(user, '<a href="/user/' + user.substring(1) + '">' + user + '</a>')
       }
     }
     this.treatedContent = replacedContent;
   }
-  
 
   render() {
+    this.mentions();
     return html` 
     <div class = "beep d-flex justify-content-center">
         <div class="card text-left w-75">

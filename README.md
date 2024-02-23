@@ -17,7 +17,7 @@ possède un hyperlien vers le profil de l'utilisateur mentionné.
 
 Les interfaces ont été gérées avec Bootstrap.
 
-Ajout d'une barre de navgation:
+Ajout d'une barre de navigation:
 - Le bouton "Twittor" renvoie vers home.
 - Cliquer sur la photo de profil renvoie vers le profil de l'utilisateur connecté.
 - Le bouton "Log out" renvoie vers la page de déconnexion.
